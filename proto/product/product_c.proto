@@ -1,0 +1,24 @@
+syntax = "proto3";
+package srv.product_c;
+option go_package = "./services/product";
+message AddProduct {
+  string name = 1;
+  string description = 2;
+  int64 stock = 3;
+}
+
+message EmptyResponse {
+  string message = 1;
+}
+
+message Product {
+  string name = 1;
+  string description = 2;
+  int64 created_at = 3;
+  int64 updated_at = 4;
+  int64 stock = 5;
+}
+
+service ProductCommandService {
+  rpc Add(AddProduct) returns (EmptyResponse){}
+}

@@ -1,0 +1,83 @@
+version: "3.9"
+
+networks:
+  microservice:
+
+volumes:
+  database:
+
+
+services:
+  # Create service with RabbitMQ.
+  message-broker:
+    image: rabbitmq:3-management-alpine
+    container_name: message-broker
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ${HOME}/dev-rabbitmq/data/:/var/lib/rabbitmq
+      - ${HOME}/dev-rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - microservice
+
+
+  product_q_srv:
+    build: product_q_srv
+    container_name: product_q_srv
+    networks:
+      - microservice
+    environment:
+      AMQP_SERVER_URL: amqp://guest:guest@message-broker:5672/
+
+  product_listener_srv:
+    build: product_listener_srv
+    container_name: product_listener_srv
+    networks:
+      - microservice
+    environment:
+      ENV: PROD
+      AMQP_SERVER_URL: amqp://guest:guest@message-broker:5672/
+      DB_USER: db_user
+      DB_PASS: db_user_pass
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: db_user_pass
+      MYSQL_DATABASE: app
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_user_pass
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      - microservice
+
+  product_c_srv:
+    build: product_c_srv
+    container_name: product_c_srv
+    networks:
+      - microservice
+
+  api_gateway:
+    build: api_gateway
+    container_name: api_gateway
+    networks:
+      - microservice
+
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.8
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock

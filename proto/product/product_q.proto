@@ -1,0 +1,21 @@
+syntax = "proto3";
+package srv.product_q;
+option go_package = "./services/product";
+
+message SearchProduct {
+  int64 page = 1;
+  string q = 2;
+}
+
+message SearchProductResult {
+  repeated ProductShowcase products = 1;
+}
+
+message ProductShowcase {
+  string name = 1;
+  int64 stock = 2;
+}
+
+service ProductQueryService {
+  rpc Search(SearchProduct) returns (SearchProductResult){}
+}

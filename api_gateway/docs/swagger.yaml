@@ -1,0 +1,95 @@
+basePath: /api
+definitions:
+  models.AuthFailedResponse:
+    properties:
+      message:
+        example: Authentication failed
+        type: string
+      status:
+        example: 0
+        type: integer
+    type: object
+  models.Product:
+    properties:
+      created_at:
+        type: integer
+      description:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      stock:
+        type: integer
+      tag:
+        type: string
+      updated_at:
+        type: integer
+    type: object
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: Public API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: API
+  version: "1.0"
+paths:
+  /product/add:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - in: formData
+        name: description
+        type: string
+      - in: formData
+        name: name
+        type: string
+      - in: formData
+        name: stock
+        type: integer
+      - in: formData
+        name: tag
+        type: string
+      - description: Product Image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+      summary: Add product
+      tags:
+      - Product
+  /product/search:
+    get:
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthFailedResponse'
+      summary: Search Product
+      tags:
+      - Product
+swagger: "2.0"

@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-command-service
+spec:
+  selector:
+    app: product-command
+  ports:
+    - port: 443
+      targetPort: 3001
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-command
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product-command
+  template:
+    metadata:
+      labels:
+        app: product-command
+    spec:
+      containers:
+        - name: product-command
+          image: registry.dev.svc.cluster.local:62119/product_c:0.0.2
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: config
+          env:
+            - name: PORT
+              value: "3001"
+            - name: ENV
+              value: "DEV"
