@@ -1,0 +1,11 @@
+steps:
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t',
+           'asia-southeast1-docker.pkg.dev/${PROJECT_ID}/wahyudotdev/api-gateway',
+           '.']
+
+  # Docker Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',
+           'asia-southeast1-docker.pkg.dev/${PROJECT_ID}/wahyudotdev/api-gateway']
