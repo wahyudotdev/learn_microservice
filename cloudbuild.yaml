@@ -2,10 +2,10 @@ steps:
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t',
-           'global-docker.pkg.dev/${PROJECT_ID}/wahyudotdev/api-gateway',
+           'gcr.io/${PROJECT_ID}/wahyudotdev/api-gateway',
            'api_gateway']
 
   # Docker Push
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push',
-           'global-docker.pkg.dev/${PROJECT_ID}/wahyudotdev/api-gateway']
+           'gcr.io/${PROJECT_ID}/wahyudotdev/api-gateway']
