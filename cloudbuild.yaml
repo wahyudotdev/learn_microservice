@@ -2,10 +2,10 @@ steps:
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t',
-           'gcr.io/${PROJECT_ID}/wahyudotdev/api-gateway',
+           'gcr.io/${PROJECT_ID}/learn_microservice/api-gateway',
            'api_gateway']
 
   # Docker Push
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push',
-           'gcr.io/${PROJECT_ID}/wahyudotdev/api-gateway']
+           'gcr.io/${PROJECT_ID}/learn_microservice/api-gateway']
