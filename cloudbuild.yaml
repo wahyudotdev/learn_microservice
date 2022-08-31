@@ -1,37 +1,4 @@
 steps:
-  # Docker Build API-gateway
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t',
-           'gcr.io/${PROJECT_ID}/learn_microservice/api-gateway',
-           'api_gateway']
-
-  # Docker Push API-gateway
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push',
-           'gcr.io/${PROJECT_ID}/learn_microservice/api-gateway']
-
-  # Docker Build Product Command service
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t',
-           'gcr.io/${PROJECT_ID}/learn_microservice/product-command',
-           'product_c_srv']
-
-  # Docker Push Product Command service
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push',
-           'gcr.io/${PROJECT_ID}/learn_microservice/product-command']
-
-
-  # Docker Build Product Query service
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t',
-           'gcr.io/${PROJECT_ID}/learn_microservice/product-query',
-           'product_q_srv']
-
-  # Docker Push Product Query service
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push',
-           'gcr.io/${PROJECT_ID}/learn_microservice/product-query']
 
   # Docker Build Product Listener service
   - name: 'gcr.io/cloud-builders/docker'
