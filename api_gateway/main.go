@@ -22,7 +22,7 @@ func main() {
 	app := fiber.New()
 	app.Use(config.Cors)
 	app.Get("/health", healthCheck())
-	app.Get("/*", swagger.HandlerDefault)
+	app.Get("/docs/*", swagger.HandlerDefault)
 	group := app.Group("/api")
 	router.ProductRouter(group)
 	log.Fatalln(app.Listen(config.Port))
