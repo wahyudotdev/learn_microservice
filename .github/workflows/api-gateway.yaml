@@ -1,9 +1,9 @@
-name: ci
+name: build api gateway image
 
 on:
   push:
-    branches:
-      - 'main'
+    paths:
+      - api-gateway/**
 
 jobs:
   docker:
@@ -16,7 +16,7 @@ jobs:
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       -
-        name: Set up Docker Buildx
+        name: Set up Docker BuildX
         uses: docker/setup-buildx-action@v2
       -
         name: Login to DockerHub
@@ -30,4 +30,4 @@ jobs:
         with:
           context: api_gateway
           push: true
-          tags: smallker/learn_api_gateway:latest
+          tags: smallker/learn_microservice-api_gateway:latest
