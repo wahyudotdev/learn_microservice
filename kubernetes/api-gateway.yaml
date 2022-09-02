@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: registry.dev.svc.cluster.local:62119/api_gateway:0.0.4
+          image: smallker/learn_microservice-api_gateway:0.0.1
           imagePullPolicy: IfNotPresent
           env:
             - name: PORT
