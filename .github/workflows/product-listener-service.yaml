@@ -1,9 +1,9 @@
-name: build api gateway image
+name: build product listener service image
 
 on:
   push:
     paths:
-      - api_gateway/**
+      - product_listener_srv/**
 
 jobs:
   docker:
@@ -28,6 +28,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: api_gateway
+          context: product_listener_srv
           push: true
-          tags: ${{secrets.DOCKERHUB_USERNAME}}/learn_microservice-api_gateway:0.0.1
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/learn_microservice-product_listener_service:0.0.1
