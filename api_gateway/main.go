@@ -30,6 +30,6 @@ func main() {
 
 func healthCheck() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		return c.SendString("api-gateway is running")
+		return c.SendString("api-gateway is ready")
 	}
 }
