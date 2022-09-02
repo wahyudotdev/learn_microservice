@@ -30,4 +30,4 @@ jobs:
         with:
           context: api_gateway
           push: true
-          tags: smallker/api_gateway:latest
+          tags: smallker/learn_api_gateway:latest
