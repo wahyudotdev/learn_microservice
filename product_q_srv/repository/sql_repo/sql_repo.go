@@ -19,7 +19,7 @@ func New(db *gorm.DB) SqlRepo {
 	}
 }
 
-func (s SqlRepo) Search(ctx context.Context, page int64, query string) (*[]models.ProductSearch, error) {
+func (s SqlRepo) Search(ctx context.Context, query string) (*[]models.ProductSearch, error) {
 	products := make([]models.ProductSearch, 0)
 	q := "%" + query + "%"
 	tx := s.Db.WithContext(ctx).Raw("SELECT * FROM product_search WHERE name LIKE ?", q).Scan(&products)

@@ -6,5 +6,5 @@ import (
 )
 
 type Repository interface {
-	Search(ctx context.Context, page int64, query string) (*[]models.ProductSearch, error)
+	Search(ctx context.Context, query string) (*[]models.ProductSearch, error)
 }

@@ -17,7 +17,7 @@ func NewService(repository repository.Repository) *Service {
 }
 
 func (s Service) Search(ctx context.Context, product *SearchProduct) (*SearchProductResult, error) {
-	data, err := s.repository.Search(ctx, product.Page, product.Q)
+	data, err := s.repository.Search(ctx, product.Q)
 	if err != nil {
 		return nil, err
 	}
