@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine
+FROM golang:1.18-alpine as builder
 WORKDIR /app
 
 COPY go.mod ./
@@ -8,6 +8,10 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o /api_gateway
+RUN go build -o main
 
-ENTRYPOINT ["/api_gateway"]
+FROM alpine:3.11.3
+
+COPY --from=builder /app/main /main
+
+ENTRYPOINT ["./main"]
