@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine
+FROM golang:1.18-alpine as builder
 WORKDIR /app
 
 COPY go.mod ./
@@ -8,6 +8,10 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o /product_q_srv
+RUN go build -o main
 
-ENTRYPOINT ["/product_q_srv"]
+FROM alpine:3.11.3
+
+COPY --from=builder /app/main /main
+
+ENTRYPOINT ["./main"]
