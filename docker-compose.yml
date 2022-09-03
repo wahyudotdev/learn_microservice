@@ -4,12 +4,31 @@ networks:
   microservice:
 
 volumes:
-  database:
+  mysql-command:
+  mysql-query:
 
+x-message-broker-env: &message-broker-env
+  AMQP_SERVER_URL: amqp://guest:guest@message-broker-service:5672
+
+x-mysql-product-command: &mysql-product-command-env
+  MYSQL_DATABASE: "app"
+  MYSQL_USER: "db_user"
+  MYSQL_ROOT_PASSWORD: "db_user_pass"
+  MYSQL_PASSWORD: "db_user_pass"
+  MYSQL_PORT: "3306"
+  MYSQL_HOST: "mysql-product-command-service"
+
+x-mysql-product-query: &mysql-product-query-env
+  MYSQL_DATABASE: "app"
+  MYSQL_USER: "db_user"
+  MYSQL_ROOT_PASSWORD: "db_user_pass"
+  MYSQL_PASSWORD: "db_user_pass"
+  MYSQL_PORT: "3306"
+  MYSQL_HOST: "mysql-product-query-service"
 
 services:
   # Create service with RabbitMQ.
-  message-broker:
+  message-broker-service:
     image: rabbitmq:3-management-alpine
     container_name: message-broker
     ports:
@@ -22,62 +41,68 @@ services:
       - microservice
 
 
-  product_q_srv:
+  product_query_service:
     build: product_q_srv
     container_name: product_q_srv
     networks:
       - microservice
     environment:
-      AMQP_SERVER_URL: amqp://guest:guest@message-broker:5672/
+      <<: *message-broker-env
+      <<: *mysql-product-query-env
+      PORT: 443
+    restart: on-failure
 
-  product_listener_srv:
+  product_listener_service:
     build: product_listener_srv
     container_name: product_listener_srv
     networks:
       - microservice
     environment:
-      ENV: PROD
-      AMQP_SERVER_URL: amqp://guest:guest@message-broker:5672/
-      DB_USER: db_user
-      DB_PASS: db_user_pass
-      DB_HOST: mysql-db
-      DB_PORT: 3306
+      <<: *message-broker-env
+      <<: *mysql-product-query-env
+    restart: on-failure
 
-  mysql-db:
+  mysql-product-query-service:
     image: mysql:8.0
-    container_name: mysql-db
+    container_name: mysql-product-query
     environment:
-      MYSQL_ROOT_PASSWORD: db_user_pass
-      MYSQL_DATABASE: app
-      MYSQL_USER: db_user
-      MYSQL_PASSWORD: db_user_pass
+      <<: *mysql-product-query-env
+      PORT: 443
     volumes:
-      - database:/var/lib/mysql
+      - mysql-query:/var/lib/mysql
     networks:
       - microservice
 
-  product_c_srv:
+  mysql-product-command-service:
+    image: mysql:8.0
+    container_name: mysql-product-command
+    environment:
+      <<: *mysql-product-command-env
+    volumes:
+      - mysql-command:/var/lib/mysql
+    networks:
+      - microservice
+
+  product_command_service:
     build: product_c_srv
     container_name: product_c_srv
     networks:
       - microservice
+    environment:
+      <<: *message-broker-env
+      <<: *mysql-product-command-env
+      PORT: 443
+    restart: on-failure
 
   api_gateway:
     build: api_gateway
     container_name: api_gateway
     networks:
       - microservice
-
-  reverse-proxy:
-    # The official v2 Traefik docker image
-    image: traefik:v2.8
-    # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
+    environment:
+      PRODUCT_C_SERVICE: product_command_service:443
+      PRODUCT_Q_SERVICE: product_query_service:443
+      PORT: 3000
     ports:
-      # The HTTP port
-      - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
+      - "3000:3000"
+    restart: on-failure
