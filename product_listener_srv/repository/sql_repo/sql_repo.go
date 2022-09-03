@@ -1,4 +1,4 @@
-package sqlite_repo
+package sql_repo
 
 import (
 	"context"
@@ -8,17 +8,17 @@ import (
 	"product_listener_srv/utils"
 )
 
-type SqliteRepo struct {
+type SqlRepo struct {
 	Db *gorm.DB
 }
 
-func New(db *gorm.DB) SqliteRepo {
-	return SqliteRepo{
+func New(db *gorm.DB) SqlRepo {
+	return SqlRepo{
 		Db: db,
 	}
 }
 
-func (s SqliteRepo) Add(data *models.Product) error {
+func (s SqlRepo) Add(data *models.Product) error {
 	ctx, cancel := context.WithTimeout(context.Background(), config.Timeout)
 	defer cancel()
 	if err := s.Db.WithContext(ctx).Create(&data); err.Error != nil {

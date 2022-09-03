@@ -5,7 +5,7 @@ import (
 	"log"
 	"product_listener_srv/config"
 	"product_listener_srv/consumer"
-	"product_listener_srv/repository/sqlite_repo"
+	"product_listener_srv/repository/sql_repo"
 )
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 	log.Println("Successfully connected to RabbitMQ")
 	log.Println("Waiting for messages")
 	forever := make(chan bool)
-	repo := sqlite_repo.New(config.Db)
+	repo := sql_repo.New(config.Db)
 	consume := consumer.New(repo, channel)
 	consume.AddProduct()
 	<-forever

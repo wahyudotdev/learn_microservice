@@ -8,7 +8,7 @@ data:
   MYSQL_ROOT_PASSWORD: "db_user_pass"
   MYSQL_PASSWORD: "db_user_pass"
   MYSQL_PORT: "3306"
-  MYSQL_HOST: "mysql-db"
+  MYSQL_HOST: "mysql-product-query"
 
 ---
 apiVersion: v1
@@ -39,7 +39,7 @@ spec:
     spec:
       containers:
         - name: query
-          image: registry.dev.svc.cluster.local:62119/product_q:0.0.1
+          image: smallker/learn_microservice-product_query_service:0.0.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3002
@@ -52,7 +52,7 @@ spec:
             - name: PORT
               value: "3002"
         - name: listener
-          image: registry.dev.svc.cluster.local:62119/product_listener:0.0.2
+          image: smallker/learn_microservice-product_listener_service:0.0.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -64,10 +64,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-db
+  name: mysql-product-query
 spec:
   selector:
-    app: mysql-db
+    app: mysql-product-query
   ports:
     - port: 3306
       targetPort: 3306
@@ -76,21 +76,27 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-db
+  name: mysql-product-query
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql-db
+      app: mysql-product-query
   template:
     metadata:
-      name: mysql-db
+      name: mysql-product-query
       labels:
-        app: mysql-db
+        app: mysql-product-query
     spec:
+      volumes:
+        - name: mysql-volume
+          emptyDir: {}
       containers:
-        - name: mysql-db
+        - name: mysql-product-query
           image: mysql
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-volume
           envFrom:
             - configMapRef:
                 name: product-query-config
