@@ -43,7 +43,10 @@ func AddProduct() fiber.Handler {
 // @Router /product/search [get]
 func SearchProduct() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		result, err := services.ProductQueryService.Search(context.Background(), &product.SearchProduct{})
+		q := c.Query("q")
+		result, err := services.ProductQueryService.Search(context.Background(), &product.SearchProduct{
+			Q: q,
+		})
 		if err != nil {
 			return c.Status(http.StatusBadRequest).JSON(err.Error())
 		}
